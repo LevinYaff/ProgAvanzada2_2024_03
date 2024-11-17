@@ -1,4 +1,4 @@
-package hn.uth.views.asignaturas;
+package hn.testuth.views.asignaturas;
 
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -7,8 +7,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -24,18 +22,19 @@ import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
-import hn.uth.data.Asignatura;
+import hn.testuth.data.Asignatura;
+import hn.testuth.services.AsignaturaService;
 import java.util.Optional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @PageTitle("Asignaturas")
-@Route("master-detail/:asignaturaID?/:action?(edit)")
-@Menu(order = 1, icon = "line-awesome/svg/bookmark-solid.svg")
+@Route("asignaturas/:asignaturaID?/:action?(edit)")
+@Menu(order = 1, icon = "line-awesome/svg/book-solid.svg")
 public class AsignaturasView extends Div implements BeforeEnterObserver {
 
     private final String ASIGNATURA_ID = "asignaturaID";
-    private final String ASIGNATURA_EDIT_ROUTE_TEMPLATE = "master-detail/%s/edit";
+    private final String ASIGNATURA_EDIT_ROUTE_TEMPLATE = "asignaturas/%s/edit";
 
     private final Grid<Asignatura> grid = new Grid<>(Asignatura.class, false);
 
@@ -45,14 +44,17 @@ public class AsignaturasView extends Div implements BeforeEnterObserver {
     private TextField modalidad;
     private TextField precio;
 
-    private final Button cancel = new Button("Cancelar", new Icon(VaadinIcon.CLOSE_SMALL));
-    private final Button save = new Button("Guardar", new Icon(VaadinIcon.CHECK));
+    private final Button cancel = new Button("Cancel");
+    private final Button save = new Button("Save");
 
     private final BeanValidationBinder<Asignatura> binder;
 
     private Asignatura asignatura;
 
-    public AsignaturasView() {
+    private final AsignaturaService asignaturaService;
+
+    public AsignaturasView(AsignaturaService asignaturaService) {
+        this.asignaturaService = asignaturaService;
         addClassNames("asignaturas-view");
 
         // Create UI
@@ -69,7 +71,9 @@ public class AsignaturasView extends Div implements BeforeEnterObserver {
         grid.addColumn("horario").setAutoWidth(true);
         grid.addColumn("modalidad").setAutoWidth(true);
         grid.addColumn("precio").setAutoWidth(true);
-        
+        grid.setItems(query -> asignaturaService.list(
+                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)))
+                .stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
 
         // when a row is selected or deselected, populate form
@@ -101,7 +105,7 @@ public class AsignaturasView extends Div implements BeforeEnterObserver {
                     this.asignatura = new Asignatura();
                 }
                 binder.writeBean(this.asignatura);
-                
+                asignaturaService.update(this.asignatura);
                 clearForm();
                 refreshGrid();
                 Notification.show("Data updated");
@@ -121,16 +125,17 @@ public class AsignaturasView extends Div implements BeforeEnterObserver {
     public void beforeEnter(BeforeEnterEvent event) {
         Optional<Long> asignaturaId = event.getRouteParameters().get(ASIGNATURA_ID).map(Long::parseLong);
         if (asignaturaId.isPresent()) {
-			/*
-			 * Optional<Asignatura> asignaturaFromBackend =
-			 * asignaturaService.get(asignaturaId.get()); if
-			 * (asignaturaFromBackend.isPresent()) {
-			 * populateForm(asignaturaFromBackend.get()); } else { Notification.show(String.
-			 * format("The requested asignatura was not found, ID = %s",
-			 * asignaturaId.get()), 3000, Notification.Position.BOTTOM_START); // when a row
-			 * is selected but the data is no longer available, // refresh grid
-			 * refreshGrid(); event.forwardTo(AsignaturasView.class); }
-			 */
+            Optional<Asignatura> asignaturaFromBackend = asignaturaService.get(asignaturaId.get());
+            if (asignaturaFromBackend.isPresent()) {
+                populateForm(asignaturaFromBackend.get());
+            } else {
+                Notification.show(String.format("The requested asignatura was not found, ID = %s", asignaturaId.get()),
+                        3000, Notification.Position.BOTTOM_START);
+                // when a row is selected but the data is no longer available,
+                // refresh grid
+                refreshGrid();
+                event.forwardTo(AsignaturasView.class);
+            }
         }
     }
 
@@ -159,8 +164,7 @@ public class AsignaturasView extends Div implements BeforeEnterObserver {
     private void createButtonLayout(Div editorLayoutDiv) {
         HorizontalLayout buttonLayout = new HorizontalLayout();
         buttonLayout.setClassName("button-layout");
-        cancel.addThemeVariants(ButtonVariant.LUMO_PRIMARY,
-                ButtonVariant.LUMO_ERROR);
+        cancel.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         buttonLayout.add(save, cancel);
         editorLayoutDiv.add(buttonLayout);

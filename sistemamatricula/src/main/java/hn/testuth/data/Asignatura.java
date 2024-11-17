@@ -1,6 +1,8 @@
-package hn.uth.data;
+package hn.testuth.data;
 
+import jakarta.persistence.Entity;
 
+@Entity
 public class Asignatura extends AbstractEntity {
 
     private String nombre;

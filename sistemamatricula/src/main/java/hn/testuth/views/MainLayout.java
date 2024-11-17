@@ -1,4 +1,4 @@
-package hn.uth.views;
+package hn.testuth.views;
 
 
 import com.vaadin.flow.component.Component;
@@ -28,9 +28,9 @@ import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
 import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 import com.vaadin.flow.theme.lumo.LumoUtility.Whitespace;
 import com.vaadin.flow.theme.lumo.LumoUtility.Width;
-import hn.uth.views.alumnos.AlumnosView;
-import hn.uth.views.asignaturas.AsignaturasView;
-import hn.uth.views.matricula.MatriculaView;
+import hn.testuth.views.alumnos.AlumnosView;
+import hn.testuth.views.asignaturas.AsignaturasView;
+import hn.testuth.views.matricula.MatriculaView;
 import org.vaadin.lineawesome.LineAwesomeIcon;
 
 /**
@@ -106,9 +106,9 @@ public class MainLayout extends AppLayout {
 
     private MenuItemInfo[] createMenuItems() {
         return new MenuItemInfo[]{ //
-                new MenuItemInfo("Alumnos", LineAwesomeIcon.USER_ALT_SOLID.create(), AlumnosView.class), //
+                new MenuItemInfo("Alumnos", LineAwesomeIcon.ID_BADGE.create(), AlumnosView.class), //
 
-                new MenuItemInfo("Asignaturas", LineAwesomeIcon.BOOKMARK_SOLID.create(), AsignaturasView.class), //
+                new MenuItemInfo("Asignaturas", LineAwesomeIcon.BOOK_SOLID.create(), AsignaturasView.class), //
 
                 new MenuItemInfo("Matricula", LineAwesomeIcon.CREDIT_CARD.create(), MatriculaView.class), //
 
