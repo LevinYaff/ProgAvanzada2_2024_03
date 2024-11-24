@@ -1,9 +1,0 @@
-{
-  "lumoImports" : [ "typography", "color", "spacing", "badge", "utility" ],
-  "assets" : {
-    "@fontsource/abel" : {
-      "*.css" : "@fontsource/abel",
-      "files/*" : "@fontsource/abel/files"
-    }
-  }
-}
