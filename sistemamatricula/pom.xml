@@ -5,9 +5,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<!-- Project from
 	https://start.vaadin.com/project/186bb0e6-4b70-47c0-9cc9-3cc926c0f319 -->
-	<groupId>hn.uth1</groupId>
-	<artifactId>sistema-matricula1</artifactId>
-	<name>sistema-matricula1</name>
+	<groupId>hn.uth</groupId>
+	<artifactId>sistema-matricula</artifactId>
+	<name>sistema-matricula</name>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
