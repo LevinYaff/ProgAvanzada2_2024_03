@@ -1,9 +1,0 @@
-{
-  "lumoImports" : [ "typography", "color", "spacing", "badge", "utility" ],
-  "assets" : {
-    "@fontsource/dosis" : {
-      "*.css" : "@fontsource/dosis",
-      "files/*" : "@fontsource/dosis/files"
-    }
-  }
-}
